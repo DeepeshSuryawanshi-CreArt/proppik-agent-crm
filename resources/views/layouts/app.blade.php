@@ -31,7 +31,7 @@
                     @auth
                         @permission('view users')
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Users</a>
+                                <a class="nav-link" href="{{ route('users.index') }}">Users</a>
                             </li>
                         @endpermission
                         @permission('view reports')

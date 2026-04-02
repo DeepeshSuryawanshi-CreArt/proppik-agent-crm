@@ -2,7 +2,15 @@
     <x-slot name="header">
         <div class="d-flex justify-content-between align-items-center">
             <h2 class="h2 fw-bold mb-0">Dashboard</h2>
-            <span class="badge bg-primary">Welcome, {{ Auth::user()->firstname }}!</span>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-primary">Welcome, {{ Auth::user()->firstname }}!</span>
+                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+                </form>
+            </div>
         </div>
     </x-slot>
 

@@ -4,7 +4,7 @@
     </IfModule>
 
     RewriteEngine On
-    RewriteBase /propik_main/
+    RewriteBase /proppikclient/
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
@@ -28,7 +28,7 @@
     # If file exists under /public, serve it transparently
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{DOCUMENT_ROOT}/propik_main/public/$1 -f
+    RewriteCond %{DOCUMENT_ROOT}/proppikclient/public/$1 -f
     RewriteRule ^(.*)$ public/$1 [L]
 
     # Send all other requests to front controller
