@@ -8,6 +8,14 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view_users')->only(['index', 'show']);
+        $this->middleware('permission:create_users')->only(['create', 'store']);
+        $this->middleware('permission:edit_users')->only(['edit', 'update']);
+        $this->middleware('permission:edit_own_users')->only(['ownEdit', 'update']);
+        $this->middleware('permission:delete_users')->only(['destroy']);
+    }
     /**
      * Display a listing of users.
      */
@@ -50,7 +58,7 @@ class UserController extends Controller
 
         $validated['password'] = bcrypt($validated['password']);
         $user = User::create($validated);
-        
+
         // Assign default role
         $user->assignRole('viewer');
 
@@ -69,6 +77,15 @@ class UserController extends Controller
      * Show the form for editing the specified user.
      */
     public function edit(User $user)
+    {
+        $countries = Country::all();
+        return view('users.edit', compact('user', 'countries'));
+    }
+
+    /**
+     * Show the form for editing the specified user.
+     */
+    public function ownEdit(User $user)
     {
         $countries = Country::all();
         return view('users.edit', compact('user', 'countries'));

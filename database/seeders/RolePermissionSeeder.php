@@ -22,36 +22,36 @@ class RolePermissionSeeder extends Seeder
         // Create permissions
         $permissions = [
             // User management
-            'view users',
-            'create users',
-            'edit users',
-            'delete users',
+            'view_users',
+            'create_users',
+            'edit_users',
+            'delete_users',
 
             // Role management
-            'view roles',
-            'create roles',
-            'edit roles',
-            'delete roles',
+            'view_roles',
+            'create_roles',
+            'edit_roles',
+            'delete_roles',
 
             // Permission management
-            'view permissions',
-            'create permissions',
-            'edit permissions',
-            'delete permissions',
+            'view_permissions',
+            'create_permissions',
+            'edit_permissions',
+            'delete_permissions',
 
             // Dashboard
-            'view dashboard',
+            'view_dashboard',
 
             // Reports
-            'view reports',
-            'generate reports',
-            'export reports',
-            'delete reports',
-            'edit reports',
+            'view_reports',
+            'generate_reports',
+            'export_reports',
+            'delete_reports',
+            'edit_reports',
 
             // Profile
-            'view own profile',
-            'edit own profile',
+            'view_own_profile',
+            'edit_own_profile',
         ];
 
         foreach ($permissions as $permission) {
