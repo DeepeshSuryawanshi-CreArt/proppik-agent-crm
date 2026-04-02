@@ -23,5 +23,8 @@ class DatabaseSeeder extends Seeder
         
         // Seed users with reports
         $this->call(UserSeeder::class);
+
+        // Seed reports
+        $this->call(ReportSeeder::class);
     }
 }

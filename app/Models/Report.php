@@ -12,12 +12,14 @@ class Report extends Model
 
     protected $fillable = [
         'user_id',
+        'person_name',
         'bill',
         'amount',
         'package',
         'payment_type',
         'gst_no',
         'address',
+        'created_by',
     ];
 
     protected function casts(): array
@@ -33,5 +35,13 @@ class Report extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the user who created the report.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

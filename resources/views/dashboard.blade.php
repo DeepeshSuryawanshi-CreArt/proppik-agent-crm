@@ -161,6 +161,106 @@
         </div>
     </div>
 
+    <!-- Quick Links Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-bottom">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-lightning"></i> Quick Links & Features</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <!-- Profile Management -->
+                        <div class="col-md-6 col-lg-4">
+                            <a href="{{ route('profile.edit') }}" class="text-decoration-none">
+                                <div class="card h-100 border-0 bg-light hover-shadow transition" style="cursor: pointer;">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-person-circle text-primary" style="font-size: 2rem;"></i>
+                                        <h6 class="card-title mt-3 mb-2 text-dark fw-bold">My Profile</h6>
+                                        <p class="card-text text-muted small">Edit your profile information and settings</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+
+                        <!-- Users Management -->
+                        @canany(['view users', 'create users'])
+                        <div class="col-md-6 col-lg-4">
+                            <a href="{{ route('users.index') }}" class="text-decoration-none">
+                                <div class="card h-100 border-0 bg-light hover-shadow transition" style="cursor: pointer;">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-people-fill text-success" style="font-size: 2rem;"></i>
+                                        <h6 class="card-title mt-3 mb-2 text-dark fw-bold">Users</h6>
+                                        <p class="card-text text-muted small">Manage all users and their permissions</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        @endcanany
+
+                        <!-- Roles Management -->
+                        @canany(['view roles', 'create roles'])
+                        <div class="col-md-6 col-lg-4">
+                            <a href="{{ route('roles.index') }}" class="text-decoration-none">
+                                <div class="card h-100 border-0 bg-light hover-shadow transition" style="cursor: pointer;">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-shield-lock text-warning" style="font-size: 2rem;"></i>
+                                        <h6 class="card-title mt-3 mb-2 text-dark fw-bold">Roles</h6>
+                                        <p class="card-text text-muted small">Configure user roles and access control</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        @endcanany
+
+                        <!-- Permissions Management -->
+                        @permission('view permissions')
+                        <div class="col-md-6 col-lg-4">
+                            <a href="{{ route('permissions.index') }}" class="text-decoration-none">
+                                <div class="card h-100 border-0 bg-light hover-shadow transition" style="cursor: pointer;">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-key-fill text-info" style="font-size: 2rem;"></i>
+                                        <h6 class="card-title mt-3 mb-2 text-dark fw-bold">Permissions</h6>
+                                        <p class="card-text text-muted small">Manage system permissions and access rights</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        @endpermission
+
+                        <!-- Reports -->
+                        @permission('view reports')
+                        <div class="col-md-6 col-lg-4">
+                            <a href="{{ route('reports.index') }}" class="text-decoration-none">
+                                <div class="card h-100 border-0 bg-light hover-shadow transition" style="cursor: pointer;">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-file-earmark-pdf text-danger" style="font-size: 2rem;"></i>
+                                        <h6 class="card-title mt-3 mb-2 text-dark fw-bold">Reports</h6>
+                                        <p class="card-text text-muted small">View and manage all generated reports</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        @endpermission
+
+                        <!-- Bills Management -->
+                        <div class="col-md-6 col-lg-4">
+                            <a href="{{ route('bills.otp-form') }}" class="text-decoration-none">
+                                <div class="card h-100 border-0 bg-light hover-shadow transition" style="cursor: pointer;">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-receipt text-secondary" style="font-size: 2rem;"></i>
+                                        <h6 class="card-title mt-3 mb-2 text-dark fw-bold">Generate Bills</h6>
+                                        <p class="card-text text-muted small">Create and manage bills with OTP verification</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Reports Section -->
     @permission('view reports')
         <div class="row">
@@ -169,7 +269,7 @@
                     <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
                         <h5 class="mb-0 fw-bold">Recent Reports</h5>
                         @permission('generate reports')
-                            <a href="#" class="btn btn-sm btn-primary">+ New Report</a>
+                            <a href="{{ route('reports.index') }}" class="btn btn-sm btn-primary">+ View All Reports</a>
                         @endpermission
                     </div>
                     <div class="card-body">

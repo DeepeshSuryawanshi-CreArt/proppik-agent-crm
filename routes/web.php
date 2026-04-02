@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\BillController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -44,6 +45,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update')->middleware('permission:edit roles');
     Route::post('/roles/{role}/toggle-block', [RoleController::class, 'toggleBlock'])->name('roles.toggleBlock')->middleware('permission:edit roles');
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy')->middleware('permission:delete roles');
+
+    // Report Management Routes
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index')->middleware('permission:view reports');
+    Route::get('/reports/{report}', [ReportController::class, 'show'])->name('reports.show')->middleware('permission:view reports');
+    Route::get('/reports/export/csv', [ReportController::class, 'export'])->name('reports.export')->middleware('permission:export reports');
+    Route::delete('/reports/{report}', [ReportController::class, 'destroy'])->name('reports.destroy')->middleware('permission:delete reports');
 
     // Bill Generation Routes
     Route::get('/bills/otp', [BillController::class, 'showOtpForm'])->name('bills.otp-form');
