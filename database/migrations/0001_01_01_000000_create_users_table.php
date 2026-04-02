@@ -13,12 +13,39 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            
+            // Personal details
+            $table->string('firstname');
+            $table->string('lastname');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            
+            // Mobile information
+            $table->string('mobile')->unique();
+            $table->string('base_mobile')->nullable();
+            $table->string('country_code')->nullable();
+            $table->string('dial_code')->nullable();
+            $table->foreignId('country_id')->nullable()->constrained('countries')->onDelete('set null');
+            
+            // Mobile verification
+            $table->timestamp('mobile_verify_at')->nullable();
+            $table->string('otp')->nullable();
+            $table->timestamp('otp_verify_at')->nullable();
+            $table->timestamp('otp_expire_at')->nullable();
+            
+            // Business details
+            $table->string('company_name')->nullable();
+            $table->string('package')->nullable();
+            $table->decimal('amount', 12, 2)->nullable();
+            $table->string('payment_type')->nullable();
+            $table->text('address')->nullable();
+            
+            // Core fields
+            $table->boolean('is_active')->default(true);
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
