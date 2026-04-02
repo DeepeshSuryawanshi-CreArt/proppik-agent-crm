@@ -49,6 +49,10 @@ class RolePermissionSeeder extends Seeder
             'delete_reports',
             'edit_reports',
 
+            // Bill Generation
+            'generate_bills',
+            'view_bills',
+
             // Profile
             'view_own_profile',
             'edit_own_profile',
@@ -65,23 +69,26 @@ class RolePermissionSeeder extends Seeder
 
         // Assign permissions to admin role
         $adminRole->syncPermissions([
-            'view users', 'create users', 'edit users', 'delete users',
-            'view roles', 'create roles', 'edit roles', 'delete roles',
-            'view permissions', 'create permissions', 'edit permissions', 'delete permissions',
-            'view dashboard', 'view reports', 'generate reports', 'export reports', 'delete reports', 'edit reports',
-            'view own profile', 'edit own profile',
+            'view_users', 'create_users', 'edit_users', 'delete_users',
+            'view_roles', 'create_roles', 'edit_roles', 'delete_roles',
+            'view_permissions', 'create_permissions', 'edit_permissions', 'delete_permissions',
+            'view_dashboard', 'view_reports', 'generate_reports', 'export_reports', 'delete_reports', 'edit_reports',
+            'generate_bills', 'view_bills',
+            'view_own_profile', 'edit_own_profile',
         ]);
 
         // Assign permissions to editor role
         $editorRole->syncPermissions([
-            'view dashboard', 'view reports', 'generate reports', 'export reports', 'edit reports',
-            'view own profile', 'edit own profile',
+            'view_dashboard', 'view_reports', 'generate_reports', 'export_reports', 'edit_reports',
+            'generate_bills', 'view_bills',
+            'view_own_profile', 'edit_own_profile',
         ]);
 
         // Assign permissions to viewer role
         $viewerRole->syncPermissions([
-            'view dashboard', 'view reports',
-            'view own profile', 'edit own profile',
+            'view_dashboard', 'view_reports',
+            'generate_bills', 'view_bills',
+            'view_own_profile', 'edit_own_profile',
         ]);
 
     }

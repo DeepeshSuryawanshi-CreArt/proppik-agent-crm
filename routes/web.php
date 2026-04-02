@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\BillController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -43,6 +44,14 @@ Route::middleware('auth')->group(function () {
     Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update')->middleware('permission:edit roles');
     Route::post('/roles/{role}/toggle-block', [RoleController::class, 'toggleBlock'])->name('roles.toggleBlock')->middleware('permission:edit roles');
     Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy')->middleware('permission:delete roles');
+
+    // Bill Generation Routes
+    Route::get('/bills/otp', [BillController::class, 'showOtpForm'])->name('bills.otp-form');
+    Route::post('/bills/verify-otp', [BillController::class, 'verifyOtp'])->name('bills.verify-otp');
+    Route::get('/bills/create', [BillController::class, 'createBill'])->name('bills.create');
+    Route::post('/bills', [BillController::class, 'storeBill'])->name('bills.store');
+    Route::get('/bills/{report}', [BillController::class, 'receipt'])->name('bills.receipt');
+    Route::get('/bills/{report}/pdf', [BillController::class, 'downloadPdf'])->name('bills.pdf');
 });
 
 require __DIR__.'/auth.php';
