@@ -5,16 +5,43 @@ namespace App\Http\Controllers;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view_roles')->only(['index', 'show']);
+        $this->middleware('permission:create_roles')->only(['create', 'store']);
+        $this->middleware('permission:edit_roles')->only(['edit', 'update', 'toggleBlock']);
+        $this->middleware('permission:delete_roles')->only(['destroy']);
+    }
     /**
      * Display a listing of roles.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $roles = Role::with('permissions')->paginate(10);
-        return view('roles.index', compact('roles'));
+        if ($request->ajax()) {
+            $roles = Role::with('permissions', 'users')->select('roles.*');
+
+            return DataTables::of($roles)
+                ->addColumn('permissions_count', function ($role) {
+                    $count = $role->permissions->count();
+                    return '<span class="badge bg-info">' . $count . '</span>';
+                })
+                ->addColumn('users_count', function ($role) {
+                    $count = $role->users()->count();
+                    return '<span class="badge bg-secondary">' . $count . '</span>';
+                })
+                ->addColumn('actions', function ($role) {
+                    $canEdit = auth()->user()->can('edit roles');
+                    $canDelete = auth()->user()->can('delete roles');
+                    return view('admin.roles.partials.actions', compact('role'))->render();
+                })
+                ->rawColumns(['permissions_count', 'users_count', 'actions'])
+                ->make(true);
+        }
+        return view('admin.roles.index');
     }
 
     /**
@@ -23,7 +50,19 @@ class RoleController extends Controller
     public function create()
     {
         $permissions = Permission::all();
-        return view('roles.create', compact('permissions'));
+        
+        // Group permissions by their prefix (e.g., "view users", "create users" → "Users")
+        $groupedPermissions = $permissions->groupBy(function ($permission) {
+            // Extract the module name from permission (e.g., "users" from "view users")
+            $parts = explode('_', $permission->name);
+            if (count($parts) >= 2) {
+                $moduleName = implode(' ', array_slice($parts, 1));
+                return ucfirst($moduleName);
+            }
+            return 'Other';
+        })->sortKeys();
+
+        return view('admin.roles.create', compact('permissions', 'groupedPermissions'));
     }
 
     /**
@@ -35,7 +74,7 @@ class RoleController extends Controller
             'name' => 'required|string|max:255|unique:roles,name',
             'description' => 'nullable|string|max:255',
             'permissions' => 'nullable|array',
-            'permissions.*' => 'exists:permissions,id',
+            'permissions.*' => 'exists:permissions,name',
         ]);
 
         $role = Role::create([
@@ -45,11 +84,11 @@ class RoleController extends Controller
         ]);
 
         if (!empty($validated['permissions'])) {
-            $permissions = Permission::whereIn('id', $validated['permissions'])->get();
+            $permissions = Permission::whereIn('name', $validated['permissions'])->get();
             $role->syncPermissions($permissions);
         }
 
-        return redirect()->route('roles.show', $role)->with('success', 'Role created successfully!');
+        return redirect()->route('admin.roles.index')->with('success', 'Role created successfully!');
     }
 
     /**
@@ -58,7 +97,7 @@ class RoleController extends Controller
     public function show(Role $role)
     {
         $role->load('permissions');
-        return view('roles.show', compact('role'));
+        return view('admin.roles.show', compact('role'));
     }
 
     /**
@@ -67,8 +106,21 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         $permissions = Permission::all();
-        $rolePermissions = $role->permissions->pluck('id')->toArray();
-        return view('roles.edit', compact('role', 'permissions', 'rolePermissions'));
+        
+        // Group permissions by their prefix (e.g., "view users", "create users" → "Users")
+        $groupedPermissions = $permissions->groupBy(function ($permission) {
+            // Extract the module name from permission (e.g., "users" from "view users")
+            $parts = explode('_', $permission->name);
+            if (count($parts) >= 2) {
+                $moduleName = implode(' ', array_slice($parts, 1));
+                return ucfirst($moduleName);
+            }
+            return 'Other';
+        })->sortKeys();
+
+        $rolePermissions = $role->permissions->pluck('name')->toArray();
+        
+        return view('admin.roles.edit', compact('role', 'permissions', 'groupedPermissions', 'rolePermissions'));
     }
 
     /**
@@ -80,7 +132,7 @@ class RoleController extends Controller
             'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
             'description' => 'nullable|string|max:255',
             'permissions' => 'nullable|array',
-            'permissions.*' => 'exists:permissions,id',
+            'permissions.*' => 'exists:permissions,name',
             'is_blocked' => 'nullable|boolean',
         ]);
 
@@ -91,13 +143,13 @@ class RoleController extends Controller
 
         // Update permissions
         if (isset($validated['permissions'])) {
-            $permissions = Permission::whereIn('id', $validated['permissions'])->get();
+            $permissions = Permission::whereIn('name', $validated['permissions'])->get();
             $role->syncPermissions($permissions);
         } else {
             $role->syncPermissions([]);
         }
 
-        return redirect()->route('roles.show', $role)->with('success', 'Role updated successfully!');
+        return redirect()->route('admin.roles.index')->with('success', 'Role updated successfully!');
     }
 
     /**
@@ -107,14 +159,14 @@ class RoleController extends Controller
     {
         // Check if role is system role
         if (in_array($role->name, ['admin', 'super-admin'])) {
-            return redirect()->route('roles.index')->with('error', 'Cannot block system roles!');
+            return redirect()->route('admin.roles.index')->with('error', 'Cannot block system roles!');
         }
 
         // For now, we'll use a meta field approach
         $isBlocked = $role->is_blocked ?? false;
         $role->update(['is_blocked' => !$isBlocked]);
 
-        return redirect()->route('roles.index')->with('success', 'Role status updated!');
+        return redirect()->route('admin.roles.index')->with('success', 'Role status updated!');
     }
 
     /**
@@ -124,14 +176,14 @@ class RoleController extends Controller
     {
         // Prevent deletion of system roles
         if (in_array($role->name, ['admin', 'super-admin', 'user'])) {
-            return redirect()->route('roles.index')->with('error', 'Cannot delete system roles!');
+            return redirect()->route('admin.roles.index')->with('error', 'Cannot delete system roles!');
         }
 
         try {
             $role->delete();
-            return redirect()->route('roles.index')->with('success', 'Role deleted successfully!');
+            return redirect()->route('admin.roles.index')->with('success', 'Role deleted successfully!');
         } catch (\Exception $e) {
-            return redirect()->route('roles.index')->with('error', 'Cannot delete role. It may be in use by users.');
+            return redirect()->route('admin.roles.index')->with('error', 'Cannot delete role. It may be in use by users.');
         }
     }
 }

@@ -62,7 +62,6 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Permissions</label>
-                        @if(!empty($canAssignPermissions) && $canAssignPermissions)
                             <div class="card">
                                 <div class="card-body">
                                     @php
@@ -99,7 +98,7 @@
                                                         <div id="group-list-{{ $groupId }}" class="collapse show px-3 pb-3">
                                                             @foreach($permissions as $permission)
                                                                 @php
-                                                                    $label = Str::title(str_replace(['_', '-'], ' ', Str::after($permission->name, Str::before($permission->name, '_') . '_')));
+                                                                    $label = Str::title(explode(' ',str_replace(['_', '-'], ' ', $permission->name))[0]);
                                                                     if ($label === '') {
                                                                         $label = Str::title(str_replace(['_', '-'], ' ', $permission->name));
                                                                     }
@@ -118,11 +117,6 @@
                                     </div>
                                 </div>
                             </div>
-                        @else
-                            <div class="alert alert-info mb-0" role="alert">
-                                You do not have permission to assign system permissions. The role will be created without changes to permission assignments.
-                            </div>
-                        @endif
                     </div>
                     <div class="d-flex gap-2">
                         <button class="btn btn-primary" type="submit"><i class="ri-check-line me-1"></i> Save Role</button>

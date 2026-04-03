@@ -71,7 +71,7 @@
                </li>
 
                <li class="nav-item">
-                    <a class="nav-link " href="">
+                    <a class="nav-link " href="{{ route('admin.roles.index') }}">
                          <span class="nav-icon">
                               <i class="ri-id-card-line"></i>
                          </span>

@@ -63,7 +63,6 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Permissions</label>
-                        @if(!empty($canAssignPermissions) && $canAssignPermissions)
                             <div class="card">
                                 <div class="card-body">
                                     @php
@@ -100,7 +99,7 @@
                                                         <div id="group-list-{{ $groupId }}" class="collapse show px-3 pb-3">
                                                             @foreach($permissions as $permission)
                                                                 @php
-                                                                    $label = Str::title(str_replace(['_', '-'], ' ', Str::after($permission->name, Str::before($permission->name, '_') . '_')));
+                                                                    $label = Str::title(explode(' ',str_replace(['_', '-'], ' ', $permission->name))[0]);
                                                                     if ($label === '') {
                                                                         $label = Str::title(str_replace(['_', '-'], ' ', $permission->name));
                                                                     }
@@ -119,10 +118,6 @@
                                     </div>
                                 </div>
                             </div>
-                        @else
-                            <div class="alert alert-info" role="alert">
-                                You do not have permission to modify role permissions. Existing permissions are shown below.
-                            </div>
                             <div class="border rounded p-3">
                                 @if($role->permissions->isEmpty())
                                     <p class="text-muted mb-0">No permissions assigned to this role.</p>
@@ -134,7 +129,6 @@
                                     </div>
                                 @endif
                             </div>
-                        @endif
                     </div>
                     <div class="d-flex gap-2">
                         <button class="btn btn-primary" type="submit"><i class="ri-save-line me-1"></i> Update Role</button>

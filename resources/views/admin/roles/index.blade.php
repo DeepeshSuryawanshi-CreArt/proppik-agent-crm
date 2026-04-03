@@ -45,12 +45,12 @@
                 <div class="d-flex align-items-center gap-2">
                     <x-admin.back-button :classes="['btn', 'btn-soft-secondary']" :merge="false"
                         icon="ri-arrow-go-back-line" />
-                    @if(!empty($canCreate) && $canCreate)
+                    @can('create_roles')
                         <a href="{{ route('admin.roles.create') }}" class="btn btn-primary" title="Add Role"
                             data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Add Role">
                             <i class="ri-shield-user-line me-1"></i> New Role
                         </a>
-                    @endif
+                    @endcan
                 </div>
             </div>
 
@@ -114,15 +114,8 @@
                 order: [[0, 'asc']],
                 columns: [
                     { data: 'name', name: 'name', className: 'fw-semibold' },
-                    { data: 'permissions', name: 'permissions', orderable: false, searchable: false },
-                    {
-                        data: 'users_count',
-                        name: 'users_count',
-                        searchable:false,
-                        render: function (data) {
-                            return `<span class="badge bg-soft-secondary text-secondary">${data ?? 0}</span>`;
-                        }
-                    },
+                    { data: 'permissions_count', name: 'permissions_count', orderable: false, searchable: false },
+                    { data: 'users_count', name: 'users_count', orderable: false, searchable: false },
                     { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'text-end' },
                 ],
                 language: {

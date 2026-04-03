@@ -48,14 +48,16 @@ Route::middleware('auth')->group(function () {
     });
 
     // Role Management Routes
-    Route::get('/roles', [RoleController::class, 'index'])->name('roles.index')->middleware('permission:view roles');
-    Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create')->middleware('permission:create roles');
-    Route::post('/roles', [RoleController::class, 'store'])->name('roles.store')->middleware('permission:create roles');
-    Route::get('/roles/{role}', [RoleController::class, 'show'])->name('roles.show')->middleware('permission:view roles');
-    Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit')->middleware('permission:edit roles');
-    Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update')->middleware('permission:edit roles');
-    Route::post('/roles/{role}/toggle-block', [RoleController::class, 'toggleBlock'])->name('roles.toggleBlock')->middleware('permission:edit roles');
-    Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy')->middleware('permission:delete roles');
+    Route::name('admin.')->group(function () {
+        Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+        Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
+        Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
+        Route::get('/roles/{role}', [RoleController::class, 'show'])->name('roles.show');
+        Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
+        Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
+        Route::post('/roles/{role}/toggle-block', [RoleController::class, 'toggleBlock'])->name('roles.toggleBlock');
+        Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    });
 
     // Report Management Routes
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index')->middleware('permission:view reports');
