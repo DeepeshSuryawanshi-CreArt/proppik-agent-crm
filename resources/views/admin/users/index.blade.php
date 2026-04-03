@@ -17,7 +17,7 @@
                 <div class="d-flex align-items-center gap-2">
                     <x-admin.back-button :classes="['btn', 'btn-soft-secondary']" :merge="false"
                         icon="ri-arrow-go-back-line" />
-                    @can('user_create')
+                    @can('create_users')
                         <a href="{{ route('admin.users.create') }}" class="btn btn-primary" title="Add User"
                             data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Add User">
                             <i class="ri-user-add-line me-1"></i> New User

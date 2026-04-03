@@ -38,10 +38,14 @@ Route::middleware('auth')->group(function () {
     });
 
     // Permission Management Routes
-    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index')->middleware('permission:view permissions');
-    Route::get('/permissions/create', [PermissionController::class, 'create'])->name('permissions.create')->middleware('permission:create permissions');
-    Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store')->middleware('permission:create permissions');
-    Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy')->middleware('permission:delete permissions');
+    Route::name('admin.')->group(function () {
+        Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
+        Route::get('/permissions/create', [PermissionController::class, 'create'])->name('permissions.create');
+        Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store');
+        Route::get('/permissions/{permission}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
+        Route::put('/permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
+        Route::delete('/permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
+    });
 
     // Role Management Routes
     Route::get('/roles', [RoleController::class, 'index'])->name('roles.index')->middleware('permission:view roles');

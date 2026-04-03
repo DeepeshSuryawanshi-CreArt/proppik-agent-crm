@@ -80,7 +80,7 @@
                </li>
 
                <li class="nav-item">
-                    <a class="nav-link " href="">
+                    <a class="nav-link " href="{{ route('admin.permissions.index') }}">
                          <span class="nav-icon">
                               <i class="ri-lock-2-line"></i>
                          </span>
