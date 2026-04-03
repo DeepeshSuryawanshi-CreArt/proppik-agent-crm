@@ -33,11 +33,7 @@ return new class extends Migration
             $table->timestamp('otp_verify_at')->nullable();
             $table->timestamp('otp_expire_at')->nullable();
             
-            // Business details
-            $table->string('company_name')->nullable();
-            $table->string('package')->nullable();
-            $table->decimal('amount', 12, 2)->nullable();
-            $table->string('payment_type')->nullable();
+            // details
             $table->text('address')->nullable();
             
             // Core fields

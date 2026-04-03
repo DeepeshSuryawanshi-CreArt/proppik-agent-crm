@@ -64,29 +64,22 @@ class RolePermissionSeeder extends Seeder
 
         // Create roles
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $editorRole = Role::firstOrCreate(['name' => 'editor']);
-        $viewerRole = Role::firstOrCreate(['name' => 'viewer']);
+        $agentRole = Role::firstOrCreate(['name' => 'agent']);
 
         // Assign permissions to admin role
         $adminRole->syncPermissions([
             'view_users', 'create_users', 'edit_users', 'delete_users',
             'view_roles', 'create_roles', 'edit_roles', 'delete_roles',
             'view_permissions', 'create_permissions', 'edit_permissions', 'delete_permissions',
-            'view_dashboard', 'view_reports', 'generate_reports', 'export_reports', 'delete_reports', 'edit_reports',
+            'view_dashboard',
+            'view_reports', 'generate_reports', 'export_reports', 'delete_reports', 'edit_reports',
             'generate_bills', 'view_bills',
             'view_own_profile', 'edit_own_profile',
         ]);
 
         // Assign permissions to editor role
-        $editorRole->syncPermissions([
-            'view_dashboard', 'view_reports', 'generate_reports', 'export_reports', 'edit_reports',
-            'generate_bills', 'view_bills',
-            'view_own_profile', 'edit_own_profile',
-        ]);
-
-        // Assign permissions to viewer role
-        $viewerRole->syncPermissions([
-            'view_dashboard', 'view_reports',
+        $agentRole->syncPermissions([
+            'view_dashboard', 'view_reports', 'generate_reports', 'export_reports',
             'generate_bills', 'view_bills',
             'view_own_profile', 'edit_own_profile',
         ]);

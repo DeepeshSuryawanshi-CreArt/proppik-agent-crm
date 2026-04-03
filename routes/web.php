@@ -6,6 +6,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -59,6 +60,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/bills', [BillController::class, 'storeBill'])->name('bills.store');
     Route::get('/bills/{report}', [BillController::class, 'receipt'])->name('bills.receipt');
     Route::get('/bills/{report}/pdf', [BillController::class, 'downloadPdf'])->name('bills.pdf');
+
+    // Customer Management Routes
+    Route::resource('customers', CustomerController::class);
 });
 
 require __DIR__.'/auth.php';

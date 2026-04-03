@@ -228,21 +228,6 @@
                         </div>
                         @endpermission
 
-                        <!-- Reports -->
-                        @permission('view reports')
-                        <div class="col-md-6 col-lg-4">
-                            <a href="{{ route('reports.index') }}" class="text-decoration-none">
-                                <div class="card h-100 border-0 bg-light hover-shadow transition" style="cursor: pointer;">
-                                    <div class="card-body text-center">
-                                        <i class="bi bi-file-earmark-pdf text-danger" style="font-size: 2rem;"></i>
-                                        <h6 class="card-title mt-3 mb-2 text-dark fw-bold">Reports</h6>
-                                        <p class="card-text text-muted small">View and manage all generated reports</p>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        @endpermission
-
                         <!-- Bills Management -->
                         <div class="col-md-6 col-lg-4">
                             <a href="{{ route('bills.otp-form') }}" class="text-decoration-none">
@@ -262,50 +247,5 @@
     </div>
 
     <!-- Reports Section -->
-    @permission('view reports')
-        <div class="row">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 fw-bold">Recent Reports</h5>
-                        @permission('generate reports')
-                            <a href="{{ route('reports.index') }}" class="btn btn-sm btn-primary">+ View All Reports</a>
-                        @endpermission
-                    </div>
-                    <div class="card-body">
-                        @if(Auth::user()->reports()->exists())
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Bill No.</th>
-                                            <th>Package</th>
-                                            <th>Amount</th>
-                                            <th>Payment Type</th>
-                                            <th>GST No.</th>
-                                            <th>Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach(Auth::user()->reports()->latest()->take(5)->get() as $report)
-                                            <tr>
-                                                <td><strong>{{ $report->bill }}</strong></td>
-                                                <td>{{ $report->package }}</td>
-                                                <td>₹ {{ number_format($report->amount, 2) }}</td>
-                                                <td>{{ $report->payment_type }}</td>
-                                                <td><small>{{ $report->gst_no }}</small></td>
-                                                <td>{{ $report->created_at->format('M d, Y') }}</td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <div class="alert alert-info mb-0">No reports yet.</div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endpermission
+    </div>
 </x-app-layout>
