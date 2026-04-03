@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Country;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
@@ -56,7 +57,9 @@ class UserController extends Controller
     public function create()
     {
         $countries = Country::all();
-        return view('admin.users.create', compact('countries'));
+        $roles = Role::all();
+        $defaultCountryId = $countries->firstWhere('code', 'IN')->id ?? null;
+        return view('admin.users.create', compact('countries','defaultCountryId','roles'));
     }
 
     /**
@@ -68,24 +71,33 @@ class UserController extends Controller
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'mobile' => 'required|string|unique:users,mobile',
+            'base_mobile' => 'required|string|min:6|max:15|unique:users,base_mobile',
             'password' => 'required|string|min:8|confirmed',
-            'country_id' => 'nullable|exists:countries,id',
-            'country_code' => 'nullable|string|max:2',
-            'dial_code' => 'nullable|string|max:10',
-            'company_name' => 'nullable|string|max:255',
-            'package' => 'nullable|string|max:255',
-            'amount' => 'nullable|numeric|min:0',
-            'payment_type' => 'nullable|string|max:255',
-            'address' => 'nullable|string',
+            'country_id' => 'required|exists:countries,id',
             'is_active' => 'nullable|boolean',
         ]);
+
+        // Get country details
+        $country = Country::find($validated['country_id']);
+        $validated['country_code'] = $country->code;
+        $validated['dial_code'] = $country->dial_code;
+        $validated['mobile'] = $country->dial_code . $validated['base_mobile'];
+
+        // Ensure mobile is unique
+        $request->validate([
+            'mobile' => 'unique:users,mobile',
+        ], [], ['mobile' => 'Mobile']);
 
         $validated['password'] = bcrypt($validated['password']);
         $user = User::create($validated);
 
-        // Assign default role
-        $user->assignRole('viewer');
+        // Assign roles if provided
+        if ($request->has('roles') && is_array($request->roles)) {
+            $user->syncRoles($request->roles);
+        } else {
+            // Assign default role
+            $user->assignRole('viewer');
+        }
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully!');
     }

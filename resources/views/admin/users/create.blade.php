@@ -39,6 +39,16 @@
                 </div>
             </div>
             <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <h5 class="alert-heading">Please fix the following errors:</h5>
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <form method="POST" action="{{ route('admin.users.store') }}" class="needs-validation" novalidate>
                     @csrf
                     <div class="row">
@@ -137,7 +147,7 @@
                         <div class="input-group">
                             <input type="password" name="password" id="password"
                                 class="form-control @error('password') is-invalid @enderror" placeholder="e.g, Pass@123#"
-                                required minlength="6">
+                                required minlength="8">
                             <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Show password" aria-pressed="false">
                                 <i class="ri-eye-line" aria-hidden="true"></i>
                             </button>
@@ -146,14 +156,35 @@
                             @error('password')
                                 {{ $message }}
                             @else
-                                Please provide a password (minimum 6 characters).
+                                Please provide a password (minimum 8 characters).
                             @enderror
                         </div>
                         @if(!$errors->has('password'))
                             <div class="valid-feedback">Looks good!</div>
                         @endif
                     </div>
-                    @if($canManageRoles)
+                    <div class="mb-3">
+                        <label for="password_confirmation" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="password" name="password_confirmation" id="password_confirmation"
+                                class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="Confirm your password"
+                                required minlength="8">
+                            <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword" aria-label="Show password" aria-pressed="false">
+                                <i class="ri-eye-line" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback">
+                            @error('password_confirmation')
+                                {{ $message }}
+                            @else
+                                Please confirm your password.
+                            @enderror
+                        </div>
+                        @if(!$errors->has('password_confirmation'))
+                            <div class="valid-feedback">Looks good!</div>
+                        @endif
+                    </div>
+                   
                     <div class="mb-3">
                          <label class="form-label">Roles:<span class="mt-1 fs-6 text-muted" >Assigne Role to the User.</span></label>
                         <div class="row g-2">
@@ -171,14 +202,15 @@
                             @endforelse
                         </div>
                     </div>
-                    @else
                     <div class="mb-3">
-                        <label class="form-label">Roles</label>
-                        <div class="alert alert-info mb-0">
-                            You do not have permission to manage user roles. Roles will be assigned by an administrator.
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', true) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_active">
+                                Active User
+                            </label>
                         </div>
+                        <div class="form-text">Uncheck to create an inactive user account.</div>
                     </div>
-                    @endif
                     <div class="d-flex gap-2">
                         <button class="btn btn-primary" type="submit"><i class="ri-check-line me-1"></i> Save User</button>
                         <a href="{{ route('admin.users.index') }}" class="btn btn-soft-secondary"><i class="ri-close-line me-1"></i> Cancel</a>
@@ -213,6 +245,21 @@ document.addEventListener('DOMContentLoaded', function() {
         togglePasswordButton.addEventListener('click', function() {
             const isPasswordType = passwordInput.type === 'password';
             passwordInput.type = isPasswordType ? 'text' : 'password';
+            this.setAttribute('aria-pressed', String(isPasswordType));
+            this.setAttribute('aria-label', isPasswordType ? 'Hide password' : 'Show password');
+            this.innerHTML = isPasswordType
+                ? '<i class="ri-eye-off-line" aria-hidden="true"></i>'
+                : '<i class="ri-eye-line" aria-hidden="true"></i>';
+        });
+    }
+
+    const confirmPasswordInput = document.getElementById('password_confirmation');
+    const toggleConfirmPasswordButton = document.getElementById('toggleConfirmPassword');
+
+    if (confirmPasswordInput && toggleConfirmPasswordButton) {
+        toggleConfirmPasswordButton.addEventListener('click', function() {
+            const isPasswordType = confirmPasswordInput.type === 'password';
+            confirmPasswordInput.type = isPasswordType ? 'text' : 'password';
             this.setAttribute('aria-pressed', String(isPasswordType));
             this.setAttribute('aria-label', isPasswordType ? 'Hide password' : 'Show password');
             this.innerHTML = isPasswordType

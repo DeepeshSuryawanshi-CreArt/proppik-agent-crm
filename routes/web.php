@@ -29,12 +29,12 @@ Route::middleware('auth')->group(function () {
     // User Management Routes
     Route::name('admin.')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::get('/users/create', [UserController::class, 'create'])->name('users.create')->middleware('permission:create users');
-        Route::post('/users', [UserController::class, 'store'])->name('users.store')->middleware('permission:create users');
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
-        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit')->middleware('permission:edit users');
-        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update')->middleware('permission:edit users');
-        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy')->middleware('permission:delete users');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 
     // Permission Management Routes
