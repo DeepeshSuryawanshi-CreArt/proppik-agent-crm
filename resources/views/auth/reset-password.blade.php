@@ -1,39 +1,81 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('password.store') }}">
-        @csrf
+@extends('layouts.auth', ['title' => 'Reset Password'])
 
-        <!-- Password Reset Token -->
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+@section('content')
+    <div class="col-xl-5">
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+        <div class="card auth-card">
+            <div class="card-body px-3 py-5">
+                <div class="mx-auto mb-4 text-center auth-logo">
+                    <a href="##" class="logo-dark">
+                        <img src="{{ asset('proppik/assets/logo/logo.svg') }}" height="75" alt="logo dark">
+                    </a>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+                    <a href="##" class="logo-light">
+                        <img src="{{ asset('proppik/assets/logo/w-logo.svg') }}" height="75" alt="logo light">
+                    </a>
+                </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+                <h2 class="fw-bold text-uppercase text-center fs-18">Reset Password</h2>
+                <p class="text-muted text-center mt-1 mb-4">Enter your new password below.</p>
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                                type="password"
-                                name="password_confirmation" required autocomplete="new-password" />
+                <div class="px-4">
+                    @if (session('status'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="ri-check-line me-2"></i>{{ session('status') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
+                    <form method="POST" action="{{ route('admin.password.update') }}" class="authentication-form">
+                        @csrf
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+                        <!-- Password Reset Token -->
+                        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+
+                        @if (sizeof($errors) > 0)
+                            @foreach ($errors->all() as $error)
+                                <p class="text-danger mb-3">{{ $error }}</p>
+                            @endforeach
+                        @endif
+
+                        <div class="mb-3">
+                            <label class="form-label" for="email">Email Address</label>
+                            <input type="email" id="email" name="email" 
+                                   class="form-control bg-light bg-opacity-50 border-light py-2 @error('email') is-invalid @enderror"
+                                   placeholder="Enter your email" value="{{ old('email', $request->email) }}" required autofocus readonly>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="password">New Password</label>
+                            <input type="password" id="password" name="password" 
+                                   class="form-control bg-light bg-opacity-50 border-light py-2 @error('password') is-invalid @enderror"
+                                   placeholder="Enter new password" required autocomplete="new-password">
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="password_confirmation">Confirm Password</label>
+                            <input type="password" id="password_confirmation" name="password_confirmation" 
+                                   class="form-control bg-light bg-opacity-50 border-light py-2"
+                                   placeholder="Confirm new password" required autocomplete="new-password">
+                        </div>
+
+                        <div class="mb-1 text-center d-grid">
+                            <button class="btn btn-danger py-2 fw-medium" type="submit">Reset Password</button>
+                        </div>
+                    </form>
+                </div> <!-- end col -->
+            </div> <!-- end card-body -->
+        </div> <!-- end card -->
+
+        <p class="mb-0 text-center text-white mt-2">
+            Back to <a href="{{ route('admin.login') }}" class="text-reset text-unline-dashed fw-bold ms-1">Sign In</a>
+        </p>
+    </div>
+@endsection
+
