@@ -1,12 +1,12 @@
 @php
-    $canEdit = $canEdit ?? auth()->user()->can('user_edit');
-    $canDelete = $canDelete ?? auth()->user()->can('user_delete');
+    $canEdit = $canEdit ?? auth()->user()->can('edit_users');
+    $canDelete = $canDelete ?? auth()->user()->can('delete_users');
 @endphp
 
 @if($canEdit || $canDelete)
     <div class="d-flex justify-content-end gap-1">
-        @if(false)
-            <a href="{{ route('admin.customer.show', $user) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="View User Profile">
+        @if(true)
+            <a href="{{ route('admin.users.show', $user) }}" class="btn btn-sm btn-soft-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="View User Profile">
                 <iconify-icon icon="solar:eye-broken" class="align-middle fs-18"></iconify-icon>
             </a>
         @endif

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Country;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
@@ -19,10 +20,34 @@ class UserController extends Controller
     /**
      * Display a listing of users.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('country')->paginate(10);
-        return view('users.index', compact('users'));
+        if ($request->ajax()) {
+            $users = User::with('country', 'roles')->select('users.*');
+
+            return DataTables::of($users)
+                ->addColumn('name', function ($user) {
+                    return $user->firstname . ' ' . $user->lastname;
+                })
+                ->addColumn('country', function ($user) {
+                    return $user->country ? $user->country->name : '';
+                })
+                ->addColumn('roles_badges', function ($user) {
+                    return $user->roles->map(function ($role) {
+                        return '<span class="badge bg-primary">' . $role->name . '</span>';
+                    })->implode(' ');
+                })
+                ->addColumn('actions', function ($user) {
+                    return view('admin.users.partials.actions', compact('user'))->render();
+                })
+                ->rawColumns(['roles_badges', 'actions'])
+                ->make(true);
+        }
+
+        $canEdit = auth()->user()->can('edit_users');
+        $canDelete = auth()->user()->can('delete_users');
+
+        return view('admin.users.index', compact('canEdit', 'canDelete'));
     }
 
     /**
@@ -31,7 +56,7 @@ class UserController extends Controller
     public function create()
     {
         $countries = Country::all();
-        return view('users.create', compact('countries'));
+        return view('admin.users.create', compact('countries'));
     }
 
     /**
@@ -62,7 +87,7 @@ class UserController extends Controller
         // Assign default role
         $user->assignRole('viewer');
 
-        return redirect()->route('users.show', $user)->with('success', 'User created successfully!');
+        return redirect()->route('admin.users.index')->with('success', 'User created successfully!');
     }
 
     /**
@@ -70,7 +95,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return view('users.show', compact('user'));
+        return view('admin.users.show', compact('user'));
     }
 
     /**
@@ -79,7 +104,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $countries = Country::all();
-        return view('users.edit', compact('user', 'countries'));
+        return view('admin.users.edit', compact('user', 'countries'));
     }
 
     /**
@@ -88,7 +113,7 @@ class UserController extends Controller
     public function ownEdit(User $user)
     {
         $countries = Country::all();
-        return view('users.edit', compact('user', 'countries'));
+        return view('admin.users.edit', compact('user', 'countries'));
     }
 
     /**
@@ -121,7 +146,7 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('users.show', $user)->with('success', 'User updated successfully!');
+        return redirect()->route('admin.users.index')->with('success', 'User updated successfully!');
     }
 
     /**
@@ -130,6 +155,6 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect()->route('users.index')->with('success', 'User deleted successfully!');
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully!');
     }
 }
